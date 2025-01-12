@@ -275,7 +275,7 @@ export function ProductionReport() {
                		<CardTitle>
                         <div className = "flex justify-between items-center">
                            <span className = "text-xl font-bold">
-                              {device} Production Report I AM EDITED
+                              {device} Production Report change install command on vercel to install legacy deps
                            </span>
                            <span className = "text-sm text-muted-foreground">
                               {format(startDate, "MMM d, yyyy")} - {" "}
