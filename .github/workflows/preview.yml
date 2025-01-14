@@ -14,12 +14,12 @@ jobs:
         node-version: [18.x, 20.x, 22.x]
     steps:
       - uses: actions/checkout@v4
-      - uses: aws-actions/configure-aws-credentials@v1
+      - uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
         with:
           role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
           role-session-name: GitHub-Action-Role
           aws-region: ${{ secrets.AWS_REGION }}
       - run: |
-          ls
+          aws sts get-caller-identity
           aws ec2-instance-connect ssh --instance-id i-0e8c9bfb3c28e15ab
   
