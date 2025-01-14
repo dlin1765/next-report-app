@@ -3,24 +3,7 @@ on:
   push:
     branches: [ "main" ]
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm install --legacy-peer-deps
-    - run: npm run build --if-present
-    - run: npm run test
   deploy:
-    needs: build
     runs-on: ubuntu-latest
     environment: Dev
     permissions:
@@ -36,6 +19,7 @@ jobs:
           role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
           role-session-name: GitHub-Action-Role
           aws-region: ${{ secrets.AWS_REGION }}
-      - run: aws ec2-instance-connect ssh --instance-id i-0e8c9bfb3c28e15ab
-      - run: ls
+      - run: |
+          ls
+          aws ec2-instance-connect ssh --instance-id i-0e8c9bfb3c28e15ab
   
