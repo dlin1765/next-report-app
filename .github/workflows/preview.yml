@@ -19,7 +19,7 @@ jobs:
           role-session-name: GitHub-Action-Role
           aws-region: us-east-2
 
-      - run: 
+      - run: |
           aws ec2-instance-connect ssh --instance-id i-0e8c9bfb3c28e15ab
           ls
       - run: |
