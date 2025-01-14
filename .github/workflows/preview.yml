@@ -18,6 +18,23 @@ jobs:
           role-to-assume: arn:aws:iam::${{secrets.AWS_ACC_ID}}:role/aws-next-report-access
           role-session-name: GitHub-Action-Role
           aws-region: us-east-2
+
+      - run: 
+          aws ec2-instance-connect ssh --instance-id i-0e8c9bfb3c28e15ab
+          ls
       - run: |
-          aws sts get-caller-identity
+          ssh-keygen -t rsa -N '' -f
+          aws ec2-instance-connect send-ssh-public-key \
+          --region us-east-2 \
+          --availability-zone us-east-2a \
+          --instance-id i-0e8c9bfb3c28e15ab \
+          --instance-os-user ubuntu \
+          --ssh-public-key file://my_key.pub
+          ssh -o "IdentitiesOnly=yes" -i my_key ubuntu@ec2-18-189-0-28.us-east-2.compute.amazonaws.com
+      - run: |
+          cd next-report-app/
+          git pull
+          npm install --legacy-peer-deps
+          npm run build
+          pm2 start npm --name next-report-app -- run start -- -p 3000
   
