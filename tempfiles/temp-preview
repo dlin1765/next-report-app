@@ -1,0 +1,38 @@
+name: Node.js CI
+on:
+  push:
+    branches: [ "main" ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: Dev
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502
+        with:
+          role-to-assume: arn:aws:iam::961341550425:role/aws-next-report-access
+          role-session-name: GitHub-Action-Role
+          aws-region: us-east-2
+      - run: |
+          mkdir -p ~/.ssh
+          ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+          aws ec2-instance-connect send-ssh-public-key \
+          --region us-east-2 \
+          --availability-zone us-east-2a \
+          --instance-id i-0e8c9bfb3c28e15ab \
+          --instance-os-user ubuntu \
+          --ssh-public-key file://my_key.pub
+          ssh -o "IdentitiesOnly=yes" -i my_key ubuntu@ec2-18-189-0-28.us-east-2.compute.amazonaws.com
+      - run: |
+          cd next-report-app/
+          git pull
+          npm install --legacy-peer-deps
+          npm run build
+          pm2 start npm --name next-report-app -- run start -- -p 3000
+  
