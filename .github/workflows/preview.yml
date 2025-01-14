@@ -18,12 +18,8 @@ jobs:
           role-to-assume: arn:aws:iam::${{secrets.AWS_ACC_ID}}:role/aws-next-report-access
           role-session-name: GitHub-Action-Role
           aws-region: us-east-2
-
       - run: |
-          aws ec2-instance-connect ssh --instance-id i-0e8c9bfb3c28e15ab
-          ls
-      - run: |
-          ssh-keygen -t rsa -N '' -f
+          ssh-keygen -t rsa -N "" -f my_key
           aws ec2-instance-connect send-ssh-public-key \
           --region us-east-2 \
           --availability-zone us-east-2a \
