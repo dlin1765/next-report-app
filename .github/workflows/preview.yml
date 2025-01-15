@@ -23,11 +23,31 @@ jobs:
           aws-region: us-east-2
       
       - name: Run commands on EC2
+        id: run_commands
         run: |
-          aws sts get-caller-identity
+          COMMAND_ID=$(aws sts get-caller-identity
           aws ssm send-command \
               --instance-ids "i-0e8c9bfb3c28e15ab" \
               --document-name "AWS-RunShellScript" \
               --parameters 'commands=["cd home/ubuntu/next-report-app", "ls"]' \
-              --comment "testing connection"
+              --query "Command.CommandId" \
+              --output text \
+              --comment "testing connection")
+
+          echo "Command ID: $COMMAND_ID"
+          echo "::set-output name=command_id::$COMMAND_ID"    
+
+      - name: Output command results
+        id: output
+        run: |
+          sleep 15s
+          COMMAND_ID=${{ steps.execute_command.outputs.command_id }}
+          aws ssm list-command-invocations \
+            --details \
+            --instance-id i-0e8c9bfb3c28e15ab \
+            --query "CommandInvocations[].CommandPlugins[].{Status:Status,Output:Output}" \
+            --command-id "$COMMAND_ID" \
+            --output text
+
+
   
