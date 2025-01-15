@@ -26,9 +26,4 @@ jobs:
         id: run_commands
         run: |
           aws sts get-caller-identity
-          aws ssm send-command \
-              --instance-ids "i-0e8c9bfb3c28e15ab" \
-              --document-name "AWS-RunShellScript" \
-              --parameters 'commands=["cd home/ubuntu/next-report-app", "git pull", "npm install --legacy-peer-deps", "npm run build", "pm2 kill", "pm2 stop", "pm2 start npm --name nextjs-app -- run start -- -p 3000"]' \
-              --comment "testing connection"
-  
+          aws ssm send-command --document-name "AWS-RunShellScript" --document-version "1" --targets '[{"Key":"InstanceIds","Values":["i-0e8c9bfb3c28e15ab"]}]' --parameters '{"commands":["cd next-report-app","git pull","npm install --legacy-peer-deps ","npm run build","pm2 kill","pm2 stop","pm2 start npm --name next-report-app -- run start -- -p 3000"],"workingDirectory":[""],"executionTimeout":["3600"]}' --timeout-seconds 1000 --max-concurrency "50" --max-errors "0" --output-s3-bucket-name "lobbylinkablebucket" --region us-east-2
