@@ -36,3 +36,48 @@ jobs:
           npm run build
           pm2 start npm --name next-report-app -- run start -- -p 3000
   
+
+  name: Node.js CI
+on:
+  push:
+    branches: [ "main" ]
+env:
+  AWS_REGION: "us-east-2"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+      - uses: peterkimzz/aws-ssm-send-command@main
+        id: ssm
+        with:
+          role-to-assume: arn:aws:iam::${{secrets.AWS_ACC_ID}}:role/aws-next-report-access
+          role-session-name: GitHub-Action-Role
+          aws-region: us-east-2
+          aws-access-key-id: ${{env.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{env.AWS_SECRET_ACCESS_KEY}}
+          instance-ids: i-0e8c9bfb3c28e15ab
+
+          working-directory: /home/ubuntu/next-report-app
+          command: ls -al
+      - run: |
+          ssh-keygen -t rsa -N "" -f my_key
+          aws ec2-instance-connect send-ssh-public-key \
+          --region us-east-2 \
+          --availability-zone us-east-2a \
+          --instance-id i-0e8c9bfb3c28e15ab \
+          --instance-os-user ubuntu \
+          --ssh-public-key file://my_key.pub
+          ssh -o "IdentitiesOnly=yes" -i my_key ubuntu@ec2-18-189-0-28.us-east-2.compute.amazonaws.com
+      - run: |
+          cd next-report-app/
+          git pull
+          npm install --legacy-peer-deps
+          npm run build
+          pm2 start npm --name next-report-app -- run start -- -p 3000
+  
