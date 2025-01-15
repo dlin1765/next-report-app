@@ -12,25 +12,22 @@ jobs:
       id-token: write
       contents: read
     steps:
-      - uses: actions/checkout@v4
-      - uses: aws-actions/configure-aws-credentials@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials OIDC
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: arn:aws:iam::${{secrets.AWS_ACC_ID}}:role/aws-next-report-access
           role-session-name: GitHub-Action-Role
           aws-region: us-east-2
-      - uses: peterkimzz/aws-ssm-send-command@master
-        id: ssm
-        with:
-          aws-region: us-east-2
-          aws-access-key-id: ${{env.AWS_ACCESS_KEY_ID}}
-          aws-secret-access-key: ${{env.AWS_SECRET_ACCESS_KEY}}
-          instance-ids: i-0e8c9bfb3c28e15ab
-
-          working-directory: /home/ubuntu/next-report-app
-          command: ls -al
-          comment: Hello world!
-
-      - name: Get the outputs
-        run: echo "The Command id is ${{ steps.ssm.outputs.command-id }}"
+      
+      - name: Run commands on EC2
+        run: |
+          aws sts get-caller-identity
+          aws ssm send-command \
+              --instance-ids "i-0e8c9bfb3c28e15ab" \
+              --document-name "AWS-RunShellScript" \
+              --parameters 'commands=["cd home/ubuntu/next-report-app", "ls"]' \
+              --comment "testing connection"
   
-        
