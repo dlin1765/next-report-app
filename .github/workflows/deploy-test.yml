@@ -6,7 +6,7 @@ on:
   push:
     branches: [ "test" ]
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,7 +24,7 @@ jobs:
     - run: npm run build --if-present
     - run: npm run test
   deploy:
-    needs: build
+    needs: build-test
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -39,4 +39,4 @@ jobs:
           role-session-name: GitHub-Action-Role
           aws-region: us-east-2
       - run: |
-            aws cloudformation create-stack --stack-name ec2-nextreport-ec2-stack --template-body file://ec2-template-file.yaml --profile dan_alternate_profile 
+            aws cloudformation create-stack --stack-name ec2-nextreport-ec2-stack --template-body file://ec2-template-file.yaml 
