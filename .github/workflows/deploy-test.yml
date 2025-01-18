@@ -37,4 +37,5 @@ jobs:
           role-to-assume: arn:aws:iam::${{secrets.AWS_ACC_ID}}:role/aws-next-report-access
           role-session-name: GitHub-Action-Role
           aws-region: us-east-2
+          run: |
             aws cloudformation create-stack --stack-name ec2-nextreport-ec2-stack --template-body file://ec2-template-file.yaml --profile dan_alternate_profile 
