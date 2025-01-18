@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
             headless: chromium.headless,
             defaultViewport: chromium.defaultViewport,
             executablePath: await chromium.executablePath(),
-            args: ["--no-sandbox", "--disable-setuid-sandbox"],
+            args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
         });
 
         const page = await browser.newPage();

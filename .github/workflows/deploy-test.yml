@@ -2,16 +2,12 @@
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
 
 name: Node.js CI
-
 on:
   push:
     branches: [ "test" ]
-
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x]
@@ -28,15 +24,17 @@ jobs:
     - run: npm run build --if-present
     - run: npm run test
   deploy:
-    needs: build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
+    permissions:
+      id-token: write
+      contents: read
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Configure AWS Credentials OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{secrets.AWS_ACC_ID}}:role/aws-next-report-access
+          role-session-name: GitHub-Action-Role
+          aws-region: us-east-2
+            aws cloudformation create-stack --stack-name ec2-nextreport-ec2-stack --template-body file://ec2-template-file.yaml --profile dan_alternate_profile 

@@ -7,9 +7,6 @@ Parameters:
     Type: AWS::EC2::KeyPair::KeyName
     Default: next-app
     ConstraintDescription: must be the name of an existing EC2 KeyPair.
-
-  
-
   InstanceType:
     Description: Basic EC2 instance type
     Type: String
@@ -145,5 +142,17 @@ Resources:
       Tags:
         - Key: "Name"
           Value: "nextreport-cf-ec2"
-
+      IamInstanceProfile : Webserver
+      InstanceInitiatedShutdownBehavior: terminate
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          cd /home/ubuntu/next-report-app
+          git config --global --add safe.directory /home/ubuntu/next-report-app
+          git symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/test
+          git switch test
+          sudo git pull
+          sudo npm install --legacy-peer-deps
+          sudo npm run build
+          sudo pm2 start npm --name next-report-app -- run start -- -p 3000
 
