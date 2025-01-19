@@ -1,7 +1,8 @@
 name: Node.js CI
 on:
-  push:
-    branches: [ "main" ]
+  pull_request:
+    types:
+      - closed
 env:
   AWS_REGION: "us-east-2"
 
@@ -25,4 +26,4 @@ jobs:
       - name: Run commands on EC2
         id: run_commands
         run: |
-          aws ssm send-command --document-name "AWS-RunShellScript" --document-version "1" --targets '[{"Key":"InstanceIds","Values":["i-02de08c0fca191858"]}]' --parameters '{"commands":["sudo git pull","sudo npm install --legacy-peer-deps","sudo npm run build","sudo pm2 start npm --name next-report-app -- run start -- -p 3000"],"workingDirectory":["/home/ubuntu/next-report-app"],"executionTimeout":["3600"]}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --output-s3-bucket-name "lobbylinkablebucket" --region us-east-2
+          aws ssm send-command --document-name "AWS-RunShellScript" --document-version "1" --targets '[{"Key":"InstanceIds","Values":[${{secrets.PROD_INSTANCE_ID}}]}]' --parameters '{"commands":["sudo git pull","sudo npm install --legacy-peer-deps","sudo npm run build","sudo pm2 start npm --name next-report-app -- run start -- -p 3000"],"workingDirectory":["/home/ubuntu/next-report-app"],"executionTimeout":["3600"]}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --output-s3-bucket-name "lobbylinkablebucket" --region us-east-2
