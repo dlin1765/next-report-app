@@ -1,9 +1,16 @@
+### Next Report App
+This repo is a Next.js React app that was a part of a technical challnege for a Junior DevOps role. It contains a CI/CD pipeline that was implemented using Github Actions and deployed to an AWS EC2 instance.
+
 ## Getting Started | Setup Instructions
 
-To set up your environment for local development, make sure Node and all its
-dependencies are installed, as well as the two testing suites.
+To run the project locally run these commands to clone the repo, install neccessary dependencies, and run the project in your local development environment.
+```
+git clone https://github.com/dlin1765/next-report-app.git
+npm install --legacy-peer-deps
+npm run dev
+# in the project directory
 
-Note, this project is using an RC candidate of react 19
+```
 
 ```bash
 npm install --legacy-peer-deps
