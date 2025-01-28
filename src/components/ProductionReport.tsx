@@ -407,7 +407,7 @@ export function ProductionReport() {
 		<div className = "mt-8 space-x-4 print:hidden">
 			<Button onClick = {() => window.print()} className = "space-x-2">
 				<Printer className = "w-4 h-4" />
-				<span> Print Report </span>
+				<span> Print Report testing... </span>
 			</Button>
 			<Button
 				onClick = {handleDownloadPDF}
