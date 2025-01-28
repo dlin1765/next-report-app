@@ -44,3 +44,4 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+next-report-app-ec2-template.yaml
