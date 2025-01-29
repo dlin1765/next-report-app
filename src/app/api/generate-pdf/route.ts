@@ -1,19 +1,14 @@
 // app/api/generate-pdf/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
-import chromium from "@sparticuz/chromium";
 
-chromium.setHeadlessMode = true;
-chromium.setGraphicsMode = false;
 export async function POST(req: NextRequest) {
     let browser;
     try {
         const { startDate, endDate, selectedDevices } = await req.json();
 
         browser = await puppeteer.launch({
-            headless: chromium.headless,
-            defaultViewport: chromium.defaultViewport,
-            executablePath: await chromium.executablePath(),
+            headless: true,
             args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
         });
 
