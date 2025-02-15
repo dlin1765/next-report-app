@@ -1,5 +1,5 @@
 # Next Report App
-This repo is a Next.js React app that was a part of a technical challnege for a Junior DevOps role. It contains a CI/CD pipeline that was implemented using Github Actions and deployed to an AWS EC2 instance.
+This repo is a Next.js React app that was a part of a technical challenge for a Junior DevOps role. It contains a CI/CD pipeline that was implemented using Github Actions and deployed to an AWS EC2 instance.
 
 ## Getting Started | Setup Instructions
 
